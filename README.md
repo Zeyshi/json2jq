@@ -1,6 +1,6 @@
 # json2jq
 
-`json2jq` is a simple Rust program that reads a JSON object from stdin and outputs a set of unique jq paths. This can be useful for exploring the structure of JSON data and integrating with other command-line tools.
+`json2jq` is a simple Rust program that reads a JSON string from stdin and outputs a set of unique jq paths. This can be useful for exploring the structure of JSON data and integrating with other command-line tools.
 
 ## Features
 
@@ -10,9 +10,16 @@
 
 ## Installation
 
-Binary for mac is provided in the releases.
+### With Homebrew
+```sh
+brew install json2jq
+```
 
-To install `json2jq` on other platforms, you'll need to have Rust installed. If you don't have Rust installed, you can get it from [rust-lang.org](https://www.rust-lang.org/).
+### Precompiled Binaries
+Precompiled binaries are available for Windows, Linux and macOS in the [releases](https://github.com/Zeyshi/json2jq/releases).
+
+### From source
+You'll need to have Rust installed. If you don't have Rust installed, you can get it from [rust-lang.org](https://www.rust-lang.org/).
 
 Clone the repository and build the project using Cargo:
 
@@ -23,6 +30,7 @@ cargo build --release
 ```
 The compiled binary will be located in the target/release directory.  
 It's recommended to then copy the binary to a directory in your `$PATH`, such as `/usr/bin`
+
 
 ## Usage
 You can use json2jq by piping JSON data into it. For example:
