@@ -10,24 +10,34 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Set up Rust
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           components: rustfmt, clippy
-        
+
+
+      # Build for Linux
       - name: Build for Linux
         if: matrix.os == 'ubuntu-latest'
         run: |
           rustup target add x86_64-unknown-linux-gnu
           cargo build --release --target x86_64-unknown-linux-gnu
           tar czf json2jq-linux.tar.gz target/x86_64-unknown-linux-gnu/release/json2jq
-      
+
+      - uses: actions/upload-artifact@v4
+        if: matrix.os == 'ubuntu-latest'
+        with:
+          name: json2jq-linux
+          path: json2jq-linux.tar.gz
+          overwrite: true
+
+      # Build for Mac x64 and ARM
       - name: Build for Mac x64
         if: matrix.os == 'macos-latest'
         run: |
@@ -35,31 +45,33 @@ jobs:
           cargo build --release --target x86_64-apple-darwin
           cargo build --release --target aarch64-apple-darwin
           tar czf json2jq-macos-x86_64.tar.gz target/x86_64-apple-darwin/release/json2jq
-
-      - name: Build for Mac ARM
-        if: matrix.os == 'macos-14-latest'
-        run: |
-          rustup target add aarch64-apple-darwin
-          cargo build --release --target aarch64-apple-darwin
           tar czf json2jq-macos-aarch64.tar.gz target/aarch64-apple-darwin/release/json2jq
 
+      - uses: actions/upload-artifact@v4
+        if: matrix.os == 'macos-latest'
+        with:
+          name: json2jq-macos-x86_64
+          path: json2jq-macos-x86_64.tar.gz
+          overwrite: true
+
+      - uses: actions/upload-artifact@v4
+        if: matrix.os == 'macos-latest'
+        with:
+          name: json2jq-macos-aarch64
+          path: json2jq-macos-aarch64.tar.gz
+          overwrite: true
+
+      # Build for Windows
       - name: Build for Windows
         if: matrix.os == 'windows-latest'
         run: |
           rustup target add x86_64-pc-windows-msvc
           cargo build --release --target x86_64-pc-windows-msvc
-      
-      - uses: actions/upload-artifact@v4
-        if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
-        with:
-          name: json2jq-${{ matrix.os }}
-          path: json2jq-*.tar.gz
-          overwrite: true
-      
+
       - uses: actions/upload-artifact@v4
         if: matrix.os == 'windows-latest'
         with:
-          name: json2jq-${{ matrix.os }}
+          name: json2jq-windows
           path: target/x86_64-pc-windows-msvc/release/json2jq.exe
           overwrite: true
 
@@ -72,8 +84,8 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          path: .        
-      
+          path: .
+
       - name: Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
