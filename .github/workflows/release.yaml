@@ -88,7 +88,8 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: .
-        run: |
+
+      - run: |
           ls -lRH
 
       - name: Release
