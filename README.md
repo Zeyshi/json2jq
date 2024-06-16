@@ -10,11 +10,6 @@
 
 ## Installation
 
-### With Homebrew
-```sh
-brew install json2jq
-```
-
 ### Precompiled Binaries
 Precompiled binaries are available for Windows, Linux and macOS in the [releases](https://github.com/Zeyshi/json2jq/releases).
 
