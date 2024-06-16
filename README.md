@@ -26,10 +26,9 @@ Clone the repository and build the project using Cargo:
 ```sh
 git clone https://github.com/yourusername/json2jq.git
 cd json2jq
-cargo build --release
+cargo install --path .
 ```
-The compiled binary will be located in the target/release directory.  
-It's recommended to then copy the binary to a directory in your `$PATH`, such as `/usr/bin`
+Make sure `~/.cargo/bin` is in your PATH.
 
 
 ## Usage

@@ -1,7 +1,7 @@
-use clap::{command, Parser};
+use clap::{command, CommandFactory, Parser};
 use serde_json::Value;
 use std::collections::HashSet;
-use std::io::{self, Read};
+use std::io::{self, read_to_string};
 use std::process;
 
 
@@ -18,10 +18,19 @@ fn main() {
     let mut input = String::new();
     if let Some(cli_input) = args.input {
         input = cli_input;
-    } else {
-        if let Err(err) = io::stdin().read_to_string(&mut input) {
-            eprintln!("Error reading input: {}", err);
-            process::exit(1);
+    }
+
+    if input.is_empty() {
+        if atty::is(atty::Stream::Stdin) {
+            Cli::command().print_help().unwrap();
+            process::exit(0);
+        }
+        match read_to_string(io::stdin()) {
+            Ok(value) => input = value,
+            Err(err) => {
+                eprintln!("Error reading from stdin: {}", err);
+                process::exit(1);
+            }
         }
     }
 
@@ -101,7 +110,7 @@ mod tests {
 
     #[test]
     fn test_generate_jq_paths_nested() {
-        let data = json!({"name": "Alive", "type": "paying", "features": [{"premium": true}]});
+        let data = json!({"name": "Alice", "type": "paying", "features": [{"premium": true}]});
         let paths = generate_jq_paths(&data).unwrap();
         let expected = vec![".features", ".features[]", ".features[].premium", ".name", ".type"];
         assert_eq!(paths, expected);
@@ -133,7 +142,7 @@ mod tests {
 
     #[test]
     fn verify_cli() {
-        use clap::CommandFactory;
+        // use clap::CommandFactory;
         Cli::command().debug_assert();
     }
 }
