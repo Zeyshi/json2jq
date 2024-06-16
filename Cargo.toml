@@ -1,6 +1,6 @@
 [package]
 name = "json2jq"
-version = "1.0.1"
+version = "1.0.0"
 edition = "2021"
 description = "Converts a json string into jq paths"
 
